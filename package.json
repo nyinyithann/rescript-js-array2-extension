@@ -1,0 +1,31 @@
+{
+  "name": "js-array2-ex",
+  "version": "0.0.1",
+  "description": "Extension methods to ReScript's Js.Array2 module",
+  "keywords": [
+    "rescript",
+    "Js.Array2"
+  ],
+  "author": "Nyi Nyi Than <nyinyithann@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nyinyithann/rescript-js-array2-extension"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@glennsl/bs-jest": "^0.7.0",
+    "bs-platform": "*",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.7"
+  },
+  "scripts": {
+    "build": "bsb -clean-world -make-world",
+    "clean": "bsb -clean-world",
+    "start": "bsb -make-world -w",
+    "test": "jest",
+    "js": "nodemon lib/js/src/JsArray2Ex.js",
+    "iv": "npm --no-git-tag-version version patch",
+    "verdaccio-publish": "npm run iv & npm publish --registry http://localhost:4873",
+    "verdaccio-unpublish": "npm unpublish --force --registry http://localhost:4873/  js-array2-ex"
+  }
+}

@@ -1,0 +1,16 @@
+#idea folder
+.idea/
+/.idea/
+/.idea/modules.xml
+/.idea/vcs.xml
+
+nohup.out
+
+.DS_Store
+/node_modules/
+/dist/
+/lib/
+.bsb.lock
+.merlin
+*.lock
+*.log
