@@ -1,9 +1,10 @@
 include Js.Array2
-
 exception InvalidArgument(string)
 
-let chunkBySize = (arr: array<'a>, chunkSize: int) => {
-  let result: array<array<'a>> = []
+@new external create: int => t<'a> = "Array"
+
+let chunkBySize: (t<'a>, int) => t<t<'a>> = (arr, chunkSize) => {
+  let result: t<t<'a>> = []
   let len = arr->length
   if chunkSize <= 0 {
     raise(InvalidArgument("chunkSize must be positive."))
@@ -29,12 +30,12 @@ let chunkBySize = (arr: array<'a>, chunkSize: int) => {
   }
 }
 
-let countBy: (array<'a>, 'a => 'key) => array<('key, int)> = (arr, projection) => {
+let countBy: (t<'a>, 'a => 'key) => t<('key, int)> = (arr, projection) => {
   let len = arr->length
   if len == 0 {
-    ([]: array<('key, int)>)
+    ([]: t<('key, int)>)
   } else {
-    let result: array<('key, int)> = []
+    let result: t<('key, int)> = []
     for i in 0 to len - 1 {
       let key = projection(arr[i])
       let idx = result->findIndex(x => {
@@ -51,4 +52,27 @@ let countBy: (array<'a>, 'a => 'key) => array<('key, int)> = (arr, projection) =
 
     result
   }
+}
+
+let scan: (t<'a>, ('b, 'a) => 'b, 'b) => t<'b> = (arr, folder, initialState) => {
+  let len = arr->length
+  let result: t<'b> = [initialState]
+  let state = ref(initialState)
+  for i in 0 to len - 1 {
+    state := folder(state.contents, arr[i])
+    result->push(state.contents)->ignore
+  }
+  result
+}
+
+let scanRight: (t<'a>, ('a, 'b) => 'b, 'b) => t<'b> = (arr, folder, initialState) => {
+  let len = arr->length
+  let result:t<'b> = create(len + 1)
+  result[len] = initialState
+  let state = ref(initialState)
+  for i in len-1 downto 0 {
+    state := folder(arr[i], state.contents)
+    result[i] = state.contents
+  }
+  result
 }

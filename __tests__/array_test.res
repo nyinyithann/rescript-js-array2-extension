@@ -81,3 +81,40 @@ describe("countBy", () => {
     )->toBeTruthy
   )
 })
+
+describe("scan", () => {
+  test("should return initial state if the source is empty", () =>
+    expect([]->scan((x, y) => x + y, 0) == [0])->toBeTruthy
+  )
+
+  test("should return correct result", () =>
+    expect([1]->scan((x, y) => x + y, 0) == [0, 1])->toBeTruthy
+  )
+
+  test("should return correct result", () =>
+    expect([1, 2, 3]->scan((x, y) => x + y, 0) == [0, 1, 3, 6])->toBeTruthy
+  )
+})
+
+describe("scanRight", () => {
+  test("should return initial state if the source is empty", () => {
+    expect([]->scanRight((x, y) => x + y, 1) == [1])->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    expect([0]->scanRight((x, y) => x + y, 1) == [1, 1])->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    expect(
+      [0, 1, 2, 3, 4, 5]->scanRight((x, y) => x + y, 0) == [15, 15, 14, 12, 9, 5, 0],
+    )->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    expect(
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]->scanRight((x, y) => x + y, 0) 
+      == [55, 54, 52, 49, 45, 40, 34, 27, 19, 10, 0],
+    )->toBeTruthy
+  })
+})
