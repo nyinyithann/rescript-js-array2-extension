@@ -5,26 +5,50 @@ open JsArray2Ex
 describe("chunkBySize", () => {
   let arr = [1, 2, 3, 4, 5, 6, 7]
 
-  test("throw exception if chunkSize is not positive", () => {
-    expect(() => chunkBySize(arr, -1))->toThrow
-  })
-
-  test("return an empty array if the source is empty", () =>
+  test("should return an empty array if the source is empty", () =>
     expect([]->chunkBySize(2) == [])->toBeTruthy
   )
 
-  test(
-    "return an array containing the source if chunkSize is greater than the length of the source",
-    () => expect(arr->chunkBySize(100) == [[1, 2, 3, 4, 5, 6, 7]])->toBeTruthy,
-  )
+  test("should throw exception if chunkSize is not positive, chunkSize = -1", () => {
+    expect(() => chunkBySize(arr, -1))->toThrow
+  })
+
+  test("should throw exception if chunkSize is not positive, chunkSize = 0", () => {
+    expect(() => chunkBySize(arr, 0))->toThrow
+  })
+
+  test("should return correct answer", () => {
+    expect(arr->chunkBySize(1) == [[1], [2], [3], [4], [5], [6], [7]])->toBeTruthy
+  })
 
   test("should return correct answer", () =>
     expect(arr->chunkBySize(2) == [[1, 2], [3, 4], [5, 6], [7]])->toBeTruthy
   )
 
   test("should return correct answer", () => {
+    expect(arr->chunkBySize(3) == [[1, 2, 3], [4, 5, 6], [7]])->toBeTruthy
+  })
+
+  test("should return correct answer", () => {
+    expect(arr->chunkBySize(4) == [[1, 2, 3, 4], [5, 6, 7]])->toBeTruthy
+  })
+
+  test("should return correct answer", () => {
+    expect(arr->chunkBySize(5) == [[1, 2, 3, 4, 5], [6, 7]])->toBeTruthy
+  })
+
+  test("should return correct answer", () => {
+    expect(arr->chunkBySize(6) == [[1, 2, 3, 4, 5, 6], [7]])->toBeTruthy
+  })
+
+  test("should return correct answer", () => {
     expect(arr->chunkBySize(length(arr)) == [arr])->toBeTruthy
   })
+
+  test(
+    "should return an array containing the source if chunkSize is greater than the length of the source",
+    () => expect(arr->chunkBySize(length(arr) + 1) == [[1, 2, 3, 4, 5, 6, 7]])->toBeTruthy,
+  )
 })
 
 describe("countBy", () => {
@@ -52,6 +76,8 @@ describe("countBy", () => {
   })
 
   test("count by true or false", () =>
-    expect([1, 1, 2, 2, 1, 3, 2]->countBy(x => mod(x,2) == 0) == [(false, 4), (true, 3)])->toBeTruthy
+    expect(
+      [1, 1, 2, 2, 1, 3, 2]->countBy(x => mod(x, 2) == 0) == [(false, 4), (true, 3)],
+    )->toBeTruthy
   )
 })

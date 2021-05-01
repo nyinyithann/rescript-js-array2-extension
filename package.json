@@ -1,6 +1,6 @@
 {
   "name": "js-array2-ex",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "Extension methods to ReScript's Js.Array2 module",
   "keywords": [
     "rescript",

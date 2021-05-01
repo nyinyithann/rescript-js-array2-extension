@@ -20,7 +20,7 @@ let chunkBySize = (arr: array<'a>, chunkSize: int) => {
       let end_ = start + chunkSize
       result->push(slice(arr, ~start, ~end_))->ignore
     }
-    if mod(len, chunkCount) != 0 {
+    if mod(len, chunkSize) != 0 {
       let start = (chunkCount - 1) * chunkSize
       let end_ = len
       result->push(slice(arr, ~start, ~end_))->ignore
@@ -35,7 +35,6 @@ let countBy: (array<'a>, 'a => 'key) => array<('key, int)> = (arr, projection) =
     ([]: array<('key, int)>)
   } else {
     let result: array<('key, int)> = []
-
     for i in 0 to len - 1 {
       let key = projection(arr[i])
       let idx = result->findIndex(x => {

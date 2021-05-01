@@ -1,4 +1,4 @@
-## JsArray2EX 
+## JsArray2Ex
 
 A ReScript library that extends Js.Array2 module.
 
