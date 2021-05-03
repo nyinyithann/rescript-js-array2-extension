@@ -1,5 +1,5 @@
 include Js.Array2
-exception InvalidArgument(string)
+exception Invalid_argument(string)
 
 @new external create: int => t<'a> = "Array"
 
@@ -7,7 +7,7 @@ let chunkBySize: (t<'a>, int) => t<t<'a>> = (arr, chunkSize) => {
   let result: t<t<'a>> = []
   let len = arr->length
   if chunkSize <= 0 {
-    raise(InvalidArgument("chunkSize must be positive."))
+    raise(Invalid_argument("chunkSize must be positive."))
   }
   if len == 0 {
     result
@@ -49,7 +49,6 @@ let countBy: (t<'a>, 'a => 'key) => t<('key, int)> = (arr, projection) => {
         result->push((key, 1))->ignore
       }
     }
-
     result
   }
 }
@@ -57,22 +56,45 @@ let countBy: (t<'a>, 'a => 'key) => t<('key, int)> = (arr, projection) => {
 let scan: (t<'a>, ('b, 'a) => 'b, 'b) => t<'b> = (arr, folder, initialState) => {
   let len = arr->length
   let result: t<'b> = [initialState]
-  let state = ref(initialState)
-  for i in 0 to len - 1 {
-    state := folder(state.contents, arr[i])
-    result->push(state.contents)->ignore
+
+  let rec loop = (i, state) => {
+    if i <= len - 1 {
+      let newState = folder(state, arr[i])
+      result->push(newState)->ignore
+      loop(i + 1, newState)
+    }
   }
+  loop(0, initialState)
   result
 }
 
 let scanRight: (t<'a>, ('a, 'b) => 'b, 'b) => t<'b> = (arr, folder, initialState) => {
   let len = arr->length
-  let result:t<'b> = create(len + 1)
+  let result: t<'b> = create(len + 1)
   result[len] = initialState
-  let state = ref(initialState)
-  for i in len-1 downto 0 {
-    state := folder(arr[i], state.contents)
-    result[i] = state.contents
+
+  let rec loop = (i, state) => {
+    if i >= 0 {
+      let newState = folder(arr[i], state)
+      result[i] = newState
+      loop(i - 1, newState)
+    }
   }
+  loop(len - 1, initialState)
+  result
+}
+
+let unfold: ('a => option<('b, 'a)>, 'a) => t<'b> = (generator, state) => {
+  let result: t<'b> = []
+  let rec loop = s => {
+    switch generator(s) {
+    | Some(x, xs) => {
+        result->push(x)->ignore
+        loop(xs)
+      }
+    | _ => ()
+    }
+  }
+  loop(state)
   result
 }

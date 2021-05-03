@@ -113,8 +113,37 @@ describe("scanRight", () => {
 
   test("should return correct result", () => {
     expect(
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]->scanRight((x, y) => x + y, 0) 
-      == [55, 54, 52, 49, 45, 40, 34, 27, 19, 10, 0],
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]->scanRight((x, y) => x + y, 0) == [
+          55,
+          54,
+          52,
+          49,
+          45,
+          40,
+          34,
+          27,
+          19,
+          10,
+          0,
+        ],
     )->toBeTruthy
+  })
+})
+
+describe("unfold", () => {
+  test("should generate array having 1 to 5", () => {
+    expect(unfold(x =>
+        if x <= 5 {
+          Some(x, x + 1)
+        } else {
+          None
+        }
+      , 1) == [1, 2, 3, 4, 5])->toBeTruthy
+  })
+
+  test("should generate fib 10", () => {
+    let fib = n =>
+      unfold(((x, (a, b))) => x < n ? Some(a + b, (x + 1, (b, a + b))) : None, (0, (0, 1)))
+    expect(fib(10) == [1, 2, 3, 5, 8, 13, 21, 34, 55, 89])->toBeTruthy
   })
 })

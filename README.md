@@ -37,6 +37,7 @@ chunkBySize: (t<'a>, int) => t<t<'a>>
 
 // result => [[1, 2, 3, 4], [5, 6, 7]]
 ```
+> throws `JsArray2Ex.Invalid_argument` if chunkSize argument is not positive.
 
 ### countBy
 ```rescript
@@ -61,6 +62,15 @@ scanRight: (t<'a>, ('a, 'b) => 'b, 'b) => t<'b>
 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]->scanRight((x, y) => x + y, 0) 
       
 // result => [55, 54, 52, 49, 45, 40, 34, 27, 19, 10, 0]
+```
+
+### unfold
+```rescript
+unfold: ('a => option<('b, 'a)>, 'a) => t<'b>
+let fib = n => unfold(((x, (a, b))) => x < n ? Some(a + b, (x + 1, (b, a + b))) : None, (0, (0, 1)))
+let fibs = fib(10)
+
+// result => [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 ```
 
 ### <br>Author
