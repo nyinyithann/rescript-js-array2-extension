@@ -9,3 +9,7 @@ let scan: (t<'a>, ('b, 'a) => 'b, 'b) => t<'b>
 let scanRight: (t<'a>, ('a, 'b) => 'b, 'b) => t<'b>
 
 let unfold: ('a => option<('b, 'a)>, 'a) => t<'b>
+
+let mapFold:  (t<'a>, ('b, 'a) => ('c, 'b), 'b) => (t<'c>, 'b)
+
+let mapFoldRight: (t<'a>, ('a, 'b) => ('c, 'b), 'b) => (t<'c>, 'b)

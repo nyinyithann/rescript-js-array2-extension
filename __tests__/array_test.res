@@ -147,3 +147,29 @@ describe("unfold", () => {
     expect(fib(10) == [1, 2, 3, 5, 8, 13, 21, 34, 55, 89])->toBeTruthy
   })
 })
+
+describe("mapFold", () => {
+  test("should return ([],state) if the source array is empty", () => {
+    expect([]->mapFold((x, y) => (x + y, x + y), 0) == ([], 0))->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    let arr1To10 = Belt.Array.makeBy(10, x => x + 1)
+    let result = arr1To10->mapFold((x, y) => (x + y, x + y), 0)
+    let expected = ([1, 3, 6, 10, 15, 21, 28, 36, 45, 55], 55)
+    expect(result == expected)->toBeTruthy
+  })
+})
+
+describe("mapFoldRight", () => {
+  test("should return ([],state) if the source array is empty", () => {
+    expect([]->mapFoldRight((x, y) => (x + y, x + y), 0) == ([], 0))->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    let arr1To10 = Belt.Array.makeBy(10, x => x + 1)
+    let result = arr1To10->mapFoldRight((x, y) => (x + y, x + y), 0)
+    let expected = ([55, 54, 52, 49, 45, 40, 34, 27, 19, 10], 55)
+    expect(result == expected)->toBeTruthy
+  })
+})

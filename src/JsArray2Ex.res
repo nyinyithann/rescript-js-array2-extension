@@ -98,3 +98,35 @@ let unfold: ('a => option<('b, 'a)>, 'a) => t<'b> = (generator, state) => {
   loop(state)
   result
 }
+
+let mapFold: (t<'a>, ('b, 'a) => ('c, 'b), 'b) => (t<'c>, 'b) = (arr, mapping, state) => {
+  switch arr->length {
+  | 0 => ([], state)
+  | len => {
+      let result: t<'c> = create(len)
+      let acc = ref(state)
+      for i in 0 to len - 1 {
+        let (c, b) = mapping(acc.contents, arr[i])
+        result[i] = c
+        acc := b
+      }
+      (result, acc.contents)
+    }
+  }
+}
+
+let mapFoldRight: (t<'a>, ('a, 'b) => ('c, 'b), 'b) => (t<'c>, 'b) = (arr, mapping, state) => {
+  switch arr->length {
+  | 0 => ([], state)
+  | len => {
+      let result: t<'c> = create(len)
+      let acc = ref(state)
+      for i in len - 1 downto 0 {
+        let (c, b) = mapping(arr[i], acc.contents)
+        result[i] = c
+        acc := b
+      }
+      (result, acc.contents)
+    }
+  }
+}
