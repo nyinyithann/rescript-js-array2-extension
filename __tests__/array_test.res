@@ -2,6 +2,12 @@ open Jest
 open ExpectJs
 open JsArray2Ex
 
+type person = {name: string, age: float}
+type shape =
+  | Rectangle({width: float, height: float})
+  | Circle({radius: float})
+  | Prism({width: (float, float), height: float})
+
 describe("chunkBySize", () => {
   let arr = [1, 2, 3, 4, 5, 6, 7]
 
@@ -171,5 +177,68 @@ describe("mapFoldRight", () => {
     let result = arr1To10->mapFoldRight((x, y) => (x + y, x + y), 0)
     let expected = ([55, 54, 52, 49, 45, 40, 34, 27, 19, 10], 55)
     expect(result == expected)->toBeTruthy
+  })
+})
+
+describe("distinct", () => {
+  test("should return empty array if source is empty", () => {
+    expect([]->distinct == [])->toBeTruthy
+  })
+
+  test("test with int array", () => {
+    expect([1, 1, 2, 2, 3, 3, 4, 4, 4]->distinct == [1, 2, 3, 4])->toBeTruthy
+  })
+
+  test("test with float array", () => {
+    expect([1., 1., 2., 2., 3., 3., 4., 4., 4.]->distinct == [1., 2., 3., 4.])->toBeTruthy
+  })
+
+  test("test with string array", () => {
+    expect(["abc", "def", "abc", "def", "def"]->distinct == ["abc", "def"])->toBeTruthy
+  })
+
+  test("test with option array", () => {
+    Js.log(None == None)
+    expect(
+      [Some(1), Some(1), None, None, Some(2)]->distinct == [Some(1), None, Some(2)],
+    )->toBeTruthy
+  })
+
+  test("test with poly variants array", () => {
+    expect(
+      [#RED, #GREEN, #BLUE, #RED, #GREEN, #BLUE]->distinct == [#RED, #GREEN, #BLUE],
+    )->toBeTruthy
+  })
+
+  test("test with record array", () => {
+    expect(
+      [{name: "a", age: 10.4}, {name: "a", age: 10.4}, {name: "a", age: 10.2}]->distinct == [
+          {name: "a", age: 10.4},
+          {name: "a", age: 10.2},
+        ],
+    )->toBeTruthy
+  })
+
+  test("test with object array", () => {
+    expect(
+      [
+        {"name": "Jack", "age": 10.4},
+        {"name": "Jack", "age": 10.4},
+        {"name": "Bliss", "age": 10.2},
+      ]->distinct == [{"name": "Jack", "age": 10.4}, {"name": "Bliss", "age": 10.2}],
+    )->toBeTruthy
+  })
+
+  test("test with variant array", () => {
+    expect(
+      [
+        Prism({width: (10., 10.), height: 20.}),
+        Prism({width: (10., 10.), height: 20.}),
+        Prism({width: (10., 10.), height: 21.}),
+      ]->distinct == [
+          Prism({width: (10., 10.), height: 20.}),
+          Prism({width: (10., 10.), height: 21.}),
+        ],
+    )->toBeTruthy
   })
 })

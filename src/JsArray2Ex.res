@@ -130,3 +130,15 @@ let mapFoldRight: (t<'a>, ('a, 'b) => ('c, 'b), 'b) => (t<'c>, 'b) = (arr, mappi
     }
   }
 }
+
+let distinct: t<'a> => t<'a> = arr => {
+  let result: t<'a> = []
+  let len = arr->length
+  for i in 0 to len - 1 {
+    switch result->findIndex(x => x == arr[i]) {
+    | -1 => result->push(arr[i])->ignore
+    | _ => ()
+    }
+  }
+  result
+}
