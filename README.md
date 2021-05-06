@@ -94,9 +94,16 @@ let result =
 // result => [{"name": "Jack", "age": 10.4}, {"name": "Bliss", "age": 10.2}]
 ```
 
+### `distinctBy: (t<'a>, 'a => 'b) => t<'a>`
+```rescript
+let result = [{name: "a", age: 10.4}, {name: "b", age: 10.4}, {name: "c", age: 10.4}]->distinctBy(x => x.age)
+
+// result => [{name: "a", age: 10.4}]      
+```
+
 ### <br>Author
 
-Nyi Nyi Than
+Nyi Nyi Than (Jazz)
 - LinkedIn: [@nyinyithann](https://www.linkedin.com/in/nyinyithan/)
 - Twitter: [@JazzTuyat](https://twitter.com/JazzTuyat)
 

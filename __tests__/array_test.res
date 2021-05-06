@@ -2,12 +2,18 @@ open Jest
 open ExpectJs
 open JsArray2Ex
 
+//#region type
 type person = {name: string, age: float}
+
 type shape =
   | Rectangle({width: float, height: float})
   | Circle({radius: float})
   | Prism({width: (float, float), height: float})
 
+@unboxed type rec any = Any('a): any
+//#endregion
+
+//#region chunkBySize
 describe("chunkBySize", () => {
   let arr = [1, 2, 3, 4, 5, 6, 7]
 
@@ -56,7 +62,9 @@ describe("chunkBySize", () => {
     () => expect(arr->chunkBySize(length(arr) + 1) == [[1, 2, 3, 4, 5, 6, 7]])->toBeTruthy,
   )
 })
+//#endregion
 
+//#region countBy
 describe("countBy", () => {
   test("source is empty", () => expect([]->countBy(x => x) == [])->toBeTruthy)
 
@@ -87,7 +95,9 @@ describe("countBy", () => {
     )->toBeTruthy
   )
 })
+//#endregion
 
+//#region scan
 describe("scan", () => {
   test("should return initial state if the source is empty", () =>
     expect([]->scan((x, y) => x + y, 0) == [0])->toBeTruthy
@@ -135,7 +145,9 @@ describe("scanRight", () => {
     )->toBeTruthy
   })
 })
+//#endregion
 
+//#region unfold
 describe("unfold", () => {
   test("should generate array having 1 to 5", () => {
     expect(unfold(x =>
@@ -153,7 +165,9 @@ describe("unfold", () => {
     expect(fib(10) == [1, 2, 3, 5, 8, 13, 21, 34, 55, 89])->toBeTruthy
   })
 })
+//#endregion
 
+//#region mapFold
 describe("mapFold", () => {
   test("should return ([],state) if the source array is empty", () => {
     expect([]->mapFold((x, y) => (x + y, x + y), 0) == ([], 0))->toBeTruthy
@@ -166,7 +180,9 @@ describe("mapFold", () => {
     expect(result == expected)->toBeTruthy
   })
 })
+//#endregion
 
+//#region mapFoldRight
 describe("mapFoldRight", () => {
   test("should return ([],state) if the source array is empty", () => {
     expect([]->mapFoldRight((x, y) => (x + y, x + y), 0) == ([], 0))->toBeTruthy
@@ -179,7 +195,9 @@ describe("mapFoldRight", () => {
     expect(result == expected)->toBeTruthy
   })
 })
+//#endregion
 
+//#region distinct
 describe("distinct", () => {
   test("should return empty array if source is empty", () => {
     expect([]->distinct == [])->toBeTruthy
@@ -198,7 +216,6 @@ describe("distinct", () => {
   })
 
   test("test with option array", () => {
-    Js.log(None == None)
     expect(
       [Some(1), Some(1), None, None, Some(2)]->distinct == [Some(1), None, Some(2)],
     )->toBeTruthy
@@ -242,3 +259,78 @@ describe("distinct", () => {
     )->toBeTruthy
   })
 })
+//#endregion
+
+//#region distinctBy
+
+describe("distinctBy", () => {
+  test("should return empty array if source is empty", () => {
+    expect([]->distinct == [])->toBeTruthy
+  })
+
+  test("test with int array", () => {
+    expect([1, 1, 2, 2, 3, 3, 4, 4, 4]->distinctBy(x => mod(x, 2) == 0) == [1, 2])->toBeTruthy
+  })
+
+  test("test with float array", () => {
+    expect([1., 1., 2., 2., 3., 3., 4., 4., 4.]->distinctBy(x => x >= 2.) == [1., 2.])->toBeTruthy
+  })
+
+  test("test with string array", () => {
+    expect(["abc", "def", "abc", "def", "def"]->distinctBy(x => x) == ["abc", "def"])->toBeTruthy
+  })
+
+  test("test with option array", () => {
+    expect(
+      [Some(1), Some(1), None, None, Some(2)]->distinctBy(x => x) == [Some(1), None, Some(2)],
+    )->toBeTruthy
+  })
+
+  test("test with poly variants array", () => {
+    expect(
+      [#RED, #GREEN, #BLUE, #RED, #GREEN, #BLUE]->distinctBy(x => x) == [#RED, #GREEN, #BLUE],
+    )->toBeTruthy
+  })
+
+  test("test with record array", () => {
+    expect(
+      [{name: "a", age: 10.4}, {name: "b", age: 10.4}, {name: "c", age: 10.4}]->distinctBy(x =>
+        x.age
+      ) == [{name: "a", age: 10.4}],
+    )->toBeTruthy
+  })
+
+  test("test with object array", () => {
+    expect(
+      [
+        {"name": "Jack", "age": 10.4},
+        {"name": "Jack", "age": 11.4},
+        {"name": "Bliss", "age": 10.2},
+      ]->distinctBy(x => x["name"]) == [
+          {"name": "Jack", "age": 10.4},
+          {"name": "Bliss", "age": 10.2},
+        ],
+    )->toBeTruthy
+  })
+
+  test("test with variant array", () => {
+    expect(
+      [
+        Prism({width: (10., 10.), height: 20.}),
+        Prism({width: (10., 10.), height: 20.}),
+        Prism({width: (10., 10.), height: 21.}),
+      ]->distinctBy(x => {
+        let Prism({width, _}) = x
+        width
+      }) == [Prism({width: (10., 10.), height: 20.})],
+    )->toBeTruthy
+  })
+
+  test("test with recursive variant type", () => {
+    expect(
+      [Any(2), Any(2), Any("two"), Any("two")]->distinctBy(x => x) == [Any(2), Any("two")],
+    )->toBeTruthy
+  })
+})
+//#endregion
+

@@ -142,3 +142,20 @@ let distinct: t<'a> => t<'a> = arr => {
   }
   result
 }
+
+let distinctBy: (t<'a>, 'a => 'b) => t<'a> = (arr, projection) => {
+  let result: t<'a> = []
+  let keys: t<'b> = []
+  let len = arr->length
+  for i in 0 to len - 1 {
+    let key = projection(arr[i])
+    switch keys->findIndex(x => x == key) {
+    | -1 => {
+        result->push(arr[i])->ignore
+        keys->push(key)->ignore
+      }
+    | _ => ()
+    }
+  }
+  result
+}
