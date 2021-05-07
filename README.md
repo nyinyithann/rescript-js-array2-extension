@@ -101,6 +101,40 @@ let result = [{name: "a", age: 10.4}, {name: "b", age: 10.4}, {name: "c", age: 1
 // result => [{name: "a", age: 10.4}]      
 ```
 
+### `groupBy: (t<'a>, 'a => 'b) => t<('b, t<'a>)>`
+```rescript
+let result = [1, 2, 3, 4, 5, 6]->groupBy(x => mod(x, 2) == 0)
+
+// result => [(false, [1, 3, 5]), (true, [2, 4, 6])]
+```
+
+### `skip: (t<'a>, int) => t<'a>`
+```rescript
+let result = [1, 2, 3, 4, 5]->skip(2)
+
+// result => [3, 4, 5]
+```
+
+### `skipWhile: (t<'a>, 'a => bool) => t<'a>`
+```rescript
+let result = [1, 2, 3, 4]->skipWhile(x => x < 3)
+
+// result => [3, 4]
+```
+
+### `take: (t<'a>, int) => t<'a>`
+```rescript
+let result = [1, 2, 3]->take(2) 
+
+// result => [1, 2]
+```
+### `takeWhile: (t<'a>, 'a => bool) => t<'a>`
+```rescript
+let result = [1,2,3,4,5,6]->takeWhile(x => x < 2)
+
+// result => [1]
+```
+
 ### <br>Author
 
 Nyi Nyi Than (Jazz)

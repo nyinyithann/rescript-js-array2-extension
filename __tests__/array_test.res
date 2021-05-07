@@ -11,6 +11,8 @@ type shape =
   | Prism({width: (float, float), height: float})
 
 @unboxed type rec any = Any('a): any
+
+type lang = {name: string, family: {"name": string}}
 //#endregion
 
 //#region chunkBySize
@@ -320,8 +322,10 @@ describe("distinctBy", () => {
         Prism({width: (10., 10.), height: 20.}),
         Prism({width: (10., 10.), height: 21.}),
       ]->distinctBy(x => {
-        let Prism({width, _}) = x
-        width
+        switch x {
+        | Prism({width, _}) => width
+        | _ => (0., 0.) // this is crazy here. :-)
+        }
       }) == [Prism({width: (10., 10.), height: 20.})],
     )->toBeTruthy
   })
@@ -334,3 +338,119 @@ describe("distinctBy", () => {
 })
 //#endregion
 
+//#region groupBy
+describe("groupBy", () => {
+  test("should return empty array if the source is empty", () => {
+    expect([]->groupBy(x => x) == [])->toBeTruthy
+  })
+
+  test("test with int array", () => {
+    expect(
+      [1, 2, 3, 4, 5, 6]->groupBy(x => mod(x, 2) == 0) == [(false, [1, 3, 5]), (true, [2, 4, 6])],
+    )->toBeTruthy
+  })
+
+  test("test with record array", () => {
+    let langs = [
+      {name: "Fsharp", family: {"name": "ML"}},
+      {name: "OCaml", family: {"name": "ML"}},
+      {name: "C++", family: {"name": "Smalltalk"}},
+      {name: "C#", family: {"name": "Smalltalk"}},
+      {name: "ReScript", family: {"name": "ML"}},
+    ]
+    let result = langs->groupBy(x => x.family["name"])
+    expect(
+      result == [
+          (
+            "ML",
+            [
+              {name: "Fsharp", family: {"name": "ML"}},
+              {name: "OCaml", family: {"name": "ML"}},
+              {name: "ReScript", family: {"name": "ML"}},
+            ],
+          ),
+          (
+            "Smalltalk",
+            [
+              {name: "C++", family: {"name": "Smalltalk"}},
+              {name: "C#", family: {"name": "Smalltalk"}},
+            ],
+          ),
+        ],
+    )->toBeTruthy
+  })
+})
+//#endregion
+
+//#region skip
+describe("skip", () => {
+  test("should return empty array if the source is empty", () =>
+    expect(([]: array<int>)->skip(10) == ([]: array<int>))->toBeTruthy
+  )
+
+  test("should return correct result", () =>
+    expect(([1, 2, 3, 4, 5]: array<int>)->skip(2) == [1, 2, 3, 4, 5]->sliceFrom(2))->toBeTruthy
+  )
+})
+//#endregion
+
+//#region skipWhile
+
+describe("skipWhile", () => {
+  test("should return empty array if the source is empty", () =>
+    expect(([]: array<int>)->skipWhile(x => x > 0) == ([]: array<int>))->toBeTruthy
+  )
+
+  test("should return correct result", () => {
+    expect([1, 2, 3, 4]->skipWhile(x => mod(x, 2) == 0) == [1, 2, 3, 4])->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    expect([1, 2, 3, 4]->skipWhile(x => mod(x, 2) == 1) == [2, 3, 4])->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    expect([1, 2, 3, 4]->skipWhile(x => x < 3) == [3, 4])->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    expect([1, 2, 3, 4]->skipWhile(x => x < 5) == [])->toBeTruthy
+  })
+})
+//#endregion
+
+//#region take
+describe("take", () => {
+  test("should return empty array if count is 0", () => {
+    expect([1, 2, 3]->take(0) == [])->toBeTruthy
+  })
+
+  test("should throw error if count < 0", () => {
+    expect(() => [1, 2, 3]->take(-1))->toThrow
+  })
+
+  test("should throw error if count > length of arr", () => {
+    expect(() => [1, 2, 3]->take(5))->toThrow
+  })
+
+  test("should throw error if count > length of arr", () => {
+    expect([1, 2, 3]->take(2) == [1, 2])->toBeTruthy
+  })
+})
+//#endregion
+
+//#region takeWhile
+describe("takeWhile", () => {
+  test("should return empty array if the source is empty", () => {
+    expect([]->takeWhile(x => x > 2) == [])->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    expect([1,2,3,4,5,6]->takeWhile(x => x > 2) == [])->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    expect([1,2,3,4,5,6]->takeWhile(x => x < 2) == [1])->toBeTruthy
+  })
+})
+//#endregion

@@ -1,5 +1,7 @@
 include Js.Array2
+
 exception Invalid_argument(string)
+exception Invalid_operation(string)
 
 @new external create: int => t<'a> = "Array"
 
@@ -158,4 +160,59 @@ let distinctBy: (t<'a>, 'a => 'b) => t<'a> = (arr, projection) => {
     }
   }
   result
+}
+
+let groupBy: (t<'a>, 'a => 'b) => t<('b, t<'a>)> = (arr, projection) => {
+  let len = arr->length
+  let result: array<('b, t<'a>)> = []
+  for i in 0 to len - 1 {
+    let key = projection(arr[i])
+    switch result->findIndex(((k, _)) => k == key) {
+    | -1 => result->push((key, [arr[i]]))->ignore
+    | idx => {
+        let (_, v) = result[idx]
+        v->push(arr[i])->ignore
+      }
+    }
+  }
+  result
+}
+
+let skip: (t<'a>, int) => t<'a> = (arr, count) => {
+  arr->sliceFrom(count)
+}
+
+let skipWhile: (t<'a>, 'a => bool) => t<'a> = (arr, predicate) => {
+  let len = arr->length
+  let i = ref(0)
+  while i.contents < len && predicate(arr[i.contents]) {
+    i := i.contents + 1
+  }
+
+  switch len - i.contents {
+  | 0 => []
+  | _ => arr->sliceFrom(i.contents)
+  }
+}
+
+let take: (t<'a>, int) => t<'a> = (arr, count) => {
+  switch count {
+  | 0 => []
+  | _ if count < 0 => raise(Invalid_argument("count must be positive."))
+  | _ if count > arr->length => raise(Invalid_operation("arr doesn't have enough elements."))
+  | _ => arr->slice(~start=0, ~end_=count)
+  }
+}
+
+let takeWhile: (t<'a>, 'a => bool) => t<'a> = (arr, predicate) => {
+  switch arr->length {
+  | 0 => []
+  | len => {
+      let count = ref(0)
+      while count.contents < len && predicate(arr[count.contents]) {
+        count := count.contents + 1
+      }
+      arr->slice(~start=0, ~end_=count.contents)
+    }
+  }
 }
