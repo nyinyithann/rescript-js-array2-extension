@@ -1,5 +1,5 @@
 -S  "js-array2-ex test console"
-screen -t "bsb -- `C-a \` to quit" 0 yarn watch:res
+screen -t "rescript -- `C-a \` to quit" 0 yarn watch:res
 split
 focus down
 screen -t "jest -- `C-a \` to quit - `C-a Esc` to scroll" 1 yarn watch:test

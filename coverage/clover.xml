@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1620381248911" clover="3.2.0">
-  <project timestamp="1620381248911" name="All files">
+<coverage generated="1620436410488" clover="3.2.0">
+  <project timestamp="1620436410488" name="All files">
     <metrics statements="172" coveredstatements="172" conditionals="42" coveredconditionals="42" methods="25" coveredmethods="25" elements="239" coveredelements="239" complexity="0" loc="172" ncloc="172" packages="1" files="1" classes="1"/>
     <file name="JsArray2Ex.js" path="/sda1/rescript-js-array2-ex/lib/js/src/JsArray2Ex.js">
       <metrics statements="172" coveredstatements="172" conditionals="42" coveredconditionals="42" methods="25" coveredmethods="25"/>
