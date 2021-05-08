@@ -14,3 +14,4 @@ nohup.out
 .merlin
 *.lock
 *.log
+/coverage/
