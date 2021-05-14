@@ -37,3 +37,13 @@ let windowed: (t<'a>, int) => t<t<'a>>
 let allPairs: (t<'a>, t<'b>) => t<('a, 'b)>
 
 let except: (t<'a>, t<'a>) => t<'a>
+
+let head: t<'a> => 'a
+
+let tryHead: t<'a> => option<'a>
+
+let tail: t<'a> => t<'a>
+
+let map2: (t<'a>, t<'b>, ('a, 'b) => 'c) => t<'c>
+
+let map3: (t<'a>, t<'b>, t<'c>, ('a, 'b, 'c) => 'd) => t<'d>

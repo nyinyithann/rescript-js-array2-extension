@@ -303,7 +303,60 @@ let except: (t<'a>, t<'a>) => t<'a> = (arr, itemsToExclude) => {
       | _ => ()
       }
     }
-
     result
   }
+}
+
+let head: t<'a> => 'a = arr => {
+  if arr->length == 0 {
+    raise(Invalid_argument("The source array is empty."))
+  } else {
+    arr[0]
+  }
+}
+
+let tryHead: t<'a> => option<'a> = arr => {
+  switch arr->length {
+  | 0 => None
+  | _ => Some(arr[0])
+  }
+}
+
+let tail: t<'a> => t<'a> = arr => {
+  if arr->length == 0 {
+    raise(Invalid_argument("The source array is empty."))
+  } else {
+    arr->sliceFrom(1)
+  }
+}
+
+let map2: (t<'a>, t<'b>, ('a, 'b) => 'c) => t<'c> = (arr1, arr2, mapping) => {
+  let len1 = arr1->length
+  let len2 = arr2->length
+
+  if len1 != len2 {
+    raise(Invalid_argument("arr1 and arr2 should have the same length."))
+  }
+
+  let result: t<'c> = create(len1)
+  for i in 0 to len1 - 1 {
+    result[i] = mapping(arr1[i], arr2[i])
+  }
+  result
+}
+
+let map3: (t<'a>, t<'b>, t<'c>, ('a, 'b, 'c) => 'd) => t<'d> = (arr1, arr2, arr3, mapping) => {
+  let len1 = arr1->length
+  let len2 = arr2->length
+  let len3 = arr3->length
+
+  if len1 != len2 || len1 != len3 {
+    raise(Invalid_argument("arr1, arr2, and arr3 should have the same length."))
+  }
+
+  let result: t<'d> = create(len1)
+  for i in 0 to len1 - 1 {
+    result[i] = mapping(arr1[i], arr2[i], arr3[i])
+  }
+  result
 }

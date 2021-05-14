@@ -506,7 +506,6 @@ describe("windowed", () => {
   })
 
   test("should return correct result", () => {
-    Js.log([1, 2, 3, 4, 5]->windowed(2))
     expect([1, 2, 3, 4, 5]->windowed(2) == [[1, 2], [2, 3], [3, 4], [4, 5]])->toBeTruthy
   })
 })
@@ -550,6 +549,70 @@ describe("except", () => {
           {"name": "def"},
         ],
     )->toBeTruthy
+  })
+})
+//#endregion
+
+//#region head
+describe("head", () => {
+  test("throw error if the source array is empty", () => {
+    expect(() => []->head)->toThrow
+  })
+
+  test("return the first element", () => {
+    expect([1, 2]->head == 1)->toBeTruthy
+  })
+})
+//#endregion
+
+//#region tryHead
+describe("tryHead", () => {
+  test("return None if the source array is empty", () => {
+    expect([]->tryHead == None)->toBeTruthy
+  })
+
+  test("return Some of the first element", () => {
+    expect([1, 2]->tryHead == Some(1))->toBeTruthy
+  })
+})
+//#endregion
+
+//#region tail
+describe("tail", () => {
+  test("throw error if the source array is empty", () => {
+    expect(() => []->tail)->toThrow
+  })
+
+  test("return empty if the source array contains a single element", () => {
+    expect([1]->tail == [])->toBeTruthy
+  })
+
+  test("return the elements except the first one", () => {
+    expect([1, 2, 4]->tail == [2, 4])->toBeTruthy
+  })
+})
+//#endregion
+
+//#region map2
+describe("map2", () => {
+  test("throw error if arr1 and arr2 don't have the same length", () => {
+    expect(() => map2([1, 2], [1], (x, y) => x + y))->toThrow
+  })
+
+  test("should return correct result", () => {
+    expect(map2([1, 2, 3], [4, 5, 6], (x, y) => x + y) == [5, 7, 9])->toBeTruthy
+  })
+})
+//#endregion
+
+//#region map3
+describe("map3", () => {
+  test("throw error if arr1, arr2 and arr3 don't have the same length", () => {
+    expect(() => map3([1, 2], [1], [1,2], (x, y, c) => x + y + c))->toThrow
+  })
+
+  test("should return correct result", () => {
+    expect(map3([1, 2, 3], [4, 5, 6], [7,8,9], (x, y, z) => x + y + z) == [12, 15, 18])->toBeTruthy
   })
 })
 //#endregion
