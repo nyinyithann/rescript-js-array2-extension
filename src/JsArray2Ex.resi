@@ -27,3 +27,13 @@ let skipWhile: (t<'a>, 'a => bool) => t<'a>
 let take: (t<'a>, int) => t<'a>
 
 let takeWhile: (t<'a>, 'a => bool) => t<'a>
+
+let splitAt: (t<'a>, int) => (t<'a>, t<'a>)
+
+let transpose: t<t<'a>> => t<t<'a>>
+
+let windowed: (t<'a>, int) => t<t<'a>>
+
+let allPairs: (t<'a>, t<'b>) => t<('a, 'b)>
+
+let except: (t<'a>, t<'a>) => t<'a>

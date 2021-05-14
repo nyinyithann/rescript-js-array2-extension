@@ -446,11 +446,110 @@ describe("takeWhile", () => {
   })
 
   test("should return correct result", () => {
-    expect([1,2,3,4,5,6]->takeWhile(x => x > 2) == [])->toBeTruthy
+    expect([1, 2, 3, 4, 5, 6]->takeWhile(x => x > 2) == [])->toBeTruthy
   })
 
   test("should return correct result", () => {
-    expect([1,2,3,4,5,6]->takeWhile(x => x < 2) == [1])->toBeTruthy
+    expect([1, 2, 3, 4, 5, 6]->takeWhile(x => x < 2) == [1])->toBeTruthy
+  })
+})
+//#endregion
+
+//#region splitAt
+describe("splitAt", () => {
+  test("should throw error if index is greater than the lenght of the source", () => {
+    expect(() => []->splitAt(1))->toThrow
+  })
+
+  test("index equals to the length of source", () => {
+    expect([1, 2, 3]->splitAt(3) == ([1, 2, 3], []))->toBeTruthy
+  })
+
+  test("index is 0", () => {
+    expect([1, 2, 3]->splitAt(0) == ([], [1, 2, 3]))->toBeTruthy
+  })
+
+  test("test an array containing one element", () => {
+    expect([0]->splitAt(0) == ([], [0]))->toBeTruthy
+  })
+
+  test("index is less than the length of the source", () => {
+    expect([1, 2, 3, 4, 5]->splitAt(3) == ([1, 2, 3], [4, 5]))->toBeTruthy
+  })
+})
+//#endregion
+
+//#region transpose
+describe("transpose", () => {
+  test("should return empty array if the source is empty", () =>
+    expect([]->transpose == [])->toBeTruthy
+  )
+
+  test("should throw error if inner arrays have different length", () => {
+    expect(() => [[1, 2], [1, 2, 3]]->transpose)->toThrow
+  })
+
+  test("should return correct result", () => {
+    expect([[1, 2], [4, 5]]->transpose == [[1, 4], [2, 5]])->toBeTruthy
+  })
+})
+//#endregion
+
+//#region windowed
+describe("windowed", () => {
+  test("should throw error if size is less than zero", () => {
+    expect(() => []->windowed(-1))->toThrow
+  })
+
+  test("should return empty array", () => {
+    expect([]->windowed(1) == [])->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    Js.log([1, 2, 3, 4, 5]->windowed(2))
+    expect([1, 2, 3, 4, 5]->windowed(2) == [[1, 2], [2, 3], [3, 4], [4, 5]])->toBeTruthy
+  })
+})
+//#endregion
+
+//#region allPairs
+describe("allPairs", () => {
+  test("test with empty arrays", () => {
+    expect(allPairs([], []) == [])->toBeTruthy
+  })
+
+  test("test with first array being empty", () => {
+    expect(allPairs([], [1, 2, 3]) == [])->toBeTruthy
+  })
+
+  test("test with second array being empty", () => {
+    expect(allPairs([1, 2], []) == [])->toBeTruthy
+  })
+
+  test("test with non empty arrays", () => {
+    expect(allPairs([1, 2], [3, 4]) == [(1, 3), (1, 4), (2, 3), (2, 4)])->toBeTruthy
+  })
+
+  test("test with no empty arrays with different length", () => {
+    expect(allPairs([1, 2], [1]) == [(1, 1), (2, 1)])->toBeTruthy
+  })
+})
+//#endregion
+
+//#region except
+describe("except", () => {
+  test("should return source array if source array or itemsToExclude is empty", () => {
+    expect([]->except([1, 2]) == [])->toBeTruthy->ignore
+    expect([1, 2, 3]->except([]) == [1, 2, 3])->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    expect([1, 2, 3]->except([1, 2]) == [3])->toBeTruthy->ignore
+    expect(
+      [{"name": "abc"}, {"name": "abc"}, {"name": "def"}]->except([{"name": "abc"}]) == [
+          {"name": "def"},
+        ],
+    )->toBeTruthy
   })
 })
 //#endregion

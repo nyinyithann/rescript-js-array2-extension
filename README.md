@@ -135,6 +135,33 @@ let result = [1,2,3,4,5,6]->takeWhile(x => x < 2)
 // result => [1]
 ```
 
+#### `splitAt: (t<'a>, int) => (t<'a>, t<'a>)`
+```rescript
+let result = [1, 2, 3, 4, 5]->splitAt(3)
+
+// result => ([1, 2, 3], [4, 5])
+```
+
+#### `transpose: t<t<'a>> => t<t<'a>>`
+```rescript
+let result = [[1, 2], [4, 5]]->transpose  
+
+// result => [[1, 4], [2, 5]]                                       
+```
+#### `windowed: (t<'a>, int) => t<t<'a>>`
+```rescript
+let result = [1,2,3,4,5] -> windowed(2) 
+
+// result =>  [[1,2], [2,3], [3,4],[4,5]]
+```
+
+#### `let except: (t<'a>, t<'a>) => t<'a>`
+```rescript
+let result = [1, 2, 3]->except([1, 2])
+
+// result => [3]
+```
+
 ### <br>Author
 
 Nyi Nyi Than (Jazz)

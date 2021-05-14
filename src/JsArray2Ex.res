@@ -40,6 +40,7 @@ let countBy: (t<'a>, 'a => 'key) => t<('key, int)> = (arr, projection) => {
     let result: t<('key, int)> = []
     for i in 0 to len - 1 {
       let key = projection(arr[i])
+      // to improve the line below
       let idx = result->findIndex(x => {
         let (k, _) = x
         k == key
@@ -137,6 +138,7 @@ let distinct: t<'a> => t<'a> = arr => {
   let result: t<'a> = []
   let len = arr->length
   for i in 0 to len - 1 {
+    // to improve the line below
     switch result->findIndex(x => x == arr[i]) {
     | -1 => result->push(arr[i])->ignore
     | _ => ()
@@ -151,6 +153,7 @@ let distinctBy: (t<'a>, 'a => 'b) => t<'a> = (arr, projection) => {
   let len = arr->length
   for i in 0 to len - 1 {
     let key = projection(arr[i])
+    // to improve the line below
     switch keys->findIndex(x => x == key) {
     | -1 => {
         result->push(arr[i])->ignore
@@ -167,6 +170,7 @@ let groupBy: (t<'a>, 'a => 'b) => t<('b, t<'a>)> = (arr, projection) => {
   let result: array<('b, t<'a>)> = []
   for i in 0 to len - 1 {
     let key = projection(arr[i])
+    // to improve the line below
     switch result->findIndex(((k, _)) => k == key) {
     | -1 => result->push((key, [arr[i]]))->ignore
     | idx => {
@@ -214,5 +218,92 @@ let takeWhile: (t<'a>, 'a => bool) => t<'a> = (arr, predicate) => {
       }
       arr->slice(~start=0, ~end_=count.contents)
     }
+  }
+}
+
+let splitAt: (t<'a>, int) => (t<'a>, t<'a>) = (arr, index) => {
+  let len = arr->length
+  if len < index {
+    raise(Invalid_operation("The source has an insufficient number of elements."))
+  }
+
+  if index == 0 {
+    ([], arr->sliceFrom(0))
+  } else if len == index {
+    (arr->sliceFrom(0), [])
+  } else {
+    (arr->slice(~start=0, ~end_=index), arr->sliceFrom(index))
+  }
+}
+
+let transpose: t<t<'a>> => t<t<'a>> = arr => {
+  let len = arr->length
+
+  if len == 0 {
+    []
+  } else {
+    let lenInner = arr[0]->length
+    for j in 0 to len - 1 {
+      if lenInner != arr[j]->length {
+        raise(Invalid_argument("all element of the source array should have the same length"))
+      }
+    }
+
+    let result: t<t<'a>> = create(lenInner)
+    for i in 0 to lenInner - 1 {
+      result[i] = create(len)
+      for j in 0 to len - 1 {
+        result[i][j] = arr[j][i]
+      }
+    }
+
+    result
+  }
+}
+
+let windowed: (t<'a>, int) => t<t<'a>> = (arr, size) => {
+  if size <= 0 {
+    raise(Invalid_argument("size must be greater than 0"))
+  }
+  let len = arr->length
+  if size > len {
+    []
+  } else {
+    let result: t<t<'a>> = create(len - size + 1)
+    for i in 0 to len - size {
+      result[i] = arr->slice(~start=i, ~end_=size + i)
+    }
+    result
+  }
+}
+
+let allPairs: (t<'a>, t<'b>) => t<('a, 'b)> = (arr1, arr2) => {
+  let len1 = arr1->length
+  let len2 = arr2->length
+  let result = create(len1 * len2)
+
+  for i in 0 to len1 - 1 {
+    for j in 0 to len2 - 1 {
+      result[i * len2 + j] = (arr1[i], arr2[j])
+    }
+  }
+  result
+}
+
+let except: (t<'a>, t<'a>) => t<'a> = (arr, itemsToExclude) => {
+  let len = arr->length
+  let lenExclude = itemsToExclude->length
+  if len == 0 || lenExclude == 0 {
+    arr
+  } else {
+    let result = []
+    for i in 0 to len - 1 {
+      switch itemsToExclude->findIndex(x => x == arr[i]) {
+      | -1 => result->push(arr[i])->ignore
+      | _ => ()
+      }
+    }
+
+    result
   }
 }
