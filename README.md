@@ -4,9 +4,15 @@ A ReScript library that extends Js.Array2 module.
 
 ## Installation
 
-`yarn add rescript-js-array2-ex` <br>
+`yarn add js-array2-ex` <br>
 or <br>
-`npm install rescript-js-array2-ex`
+`npm install js-array2-ex`
+
+Add it to `bsconfig.json`
+  ```json
+  "bs-dependencies": ["js-array2-ex"]
+  ```
+
 
 ## Getting started
 `JsArray2Ex` extends `Js.Array2` module. `open JsArray2Ex` will opens `Js.Array2` module too.
