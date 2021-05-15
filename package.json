@@ -1,7 +1,7 @@
 {
   "name": "js-array2-ex",
-  "version": "0.0.4",
-  "description": "Extension methods to ReScript's Js.Array2 module",
+  "version": "0.0.2",
+  "description": "Some extension methods to ReScript's Js.Array2 module",
   "keywords": [
     "rescript",
     "Js.Array2"
@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "rescript",
-    "clean": "rescript clean",    
+    "clean": "rescript clean",
     "test": "yarn build && jest --coverage",
     "js": "nodemon lib/js/src/JsArray2Ex.js",
     "iv": "npm --no-git-tag-version version patch",
@@ -29,6 +29,5 @@
     "watch:res": "rescript build -w",
     "watch:test": "jest --coverage --watchAll",
     "watch:screen": "screen -c .screenrc"
-  },
-  "dependencies": {}
+  }
 }

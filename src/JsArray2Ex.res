@@ -360,3 +360,178 @@ let map3: (t<'a>, t<'b>, t<'c>, ('a, 'b, 'c) => 'd) => t<'d> = (arr1, arr2, arr3
   }
   result
 }
+
+let pairwise: t<'a> => t<('a, 'a)> = arr => {
+  let len = arr->length
+  if len < 2 {
+    []
+  } else {
+    Belt.Array.makeByU(len - 1, (. i) => (arr[i], arr[i + 1]))
+  }
+}
+
+let minInt: t<int> => int = arr => {
+  let len = arr->length
+  if len == 0 {
+    raise(Invalid_operation("The source array should not be empty."))
+  }
+
+  let min = ref(arr[0])
+  for i in 1 to len - 1 {
+    let n = arr[i]
+    if min.contents > n {
+      min := n
+    }
+  }
+  min.contents
+}
+
+let maxInt: t<int> => int = arr => {
+  let len = arr->length
+  if len == 0 {
+    raise(Invalid_operation("The source array should not be empty."))
+  }
+
+  let max = ref(arr[0])
+  for i in 1 to len - 1 {
+    let n = arr[i]
+    if max.contents < n {
+      max := n
+    }
+  }
+  max.contents
+}
+
+let minFloat: t<float> => float = arr => {
+  let len = arr->length
+  if len == 0 {
+    raise(Invalid_operation("The source array should not be empty."))
+  }
+
+  let min = ref(arr[0])
+  for i in 1 to len - 1 {
+    let n = arr[i]
+    if min.contents > n {
+      min := n
+    }
+  }
+  min.contents
+}
+
+let maxFloat: t<float> => float = arr => {
+  let len = arr->length
+  if len == 0 {
+    raise(Invalid_operation("The source array should not be empty."))
+  }
+
+  let max = ref(arr[0])
+  for i in 1 to len - 1 {
+    let n = arr[i]
+    if max.contents < n {
+      max := n
+    }
+  }
+  max.contents
+}
+
+let sumInt: t<int> => int = arr => {
+  arr->reduce((x, y) => x + y, 0)
+}
+
+let sumFloat: t<float> => float = arr => {
+  arr->reduce((x, y) => x +. y, 0.)
+}
+
+let averageInt: t<int> => float = arr => {
+  if arr->length == 0 {
+    raise(Invalid_argument("The input array should not be empty."))
+  }
+  Js.Int.toFloat(sumInt(arr)) /. Js.Int.toFloat(length(arr))
+}
+
+let averageFloat: t<float> => float = arr => {
+  if arr->length == 0 {
+    raise(Invalid_argument("The input array should not be empty."))
+  }
+  sumFloat(arr) /. Js.Int.toFloat(length(arr))
+}
+
+let sumIntBy: (t<'a>, 'a => int) => int = (arr, projection) => {
+  let sum = ref(0)
+  let len = arr->length
+  for i in 0 to len - 1 {
+    sum := sum.contents + projection(arr[i])
+  }
+  sum.contents
+}
+
+let sumFloatBy: (t<'a>, 'a => float) => float = (arr, projection) => {
+  let sum = ref(0.)
+  let len = arr->length
+  for i in 0 to len - 1 {
+    sum := sum.contents +. projection(arr[i])
+  }
+  sum.contents
+}
+
+let minBy: (t<'a>, 'a => 'b) => 'a = (arr, projection) => {
+  let len = arr->length
+  if len == 0 {
+    raise(Invalid_argument("The input array should not be empty."))
+  }
+
+  let min = ref(arr[0])
+  let x = ref(projection(arr[0]))
+  for i in 1 to len - 1 {
+    let a = arr[i]
+    let b = projection(a)
+    if b < x.contents {
+      min := a
+      x := b
+    }
+  }
+  min.contents
+}
+
+let maxBy: (t<'a>, 'a => 'b) => 'a = (arr, projection) => {
+  let len = arr->length
+  if len == 0 {
+    raise(Invalid_argument("The input array should not be empty."))
+  }
+
+  let max = ref(arr[0])
+  let x = ref(projection(arr[0]))
+  for i in 1 to len - 1 {
+    let a = arr[i]
+    let b = projection(a)
+    if b > x.contents {
+      max := a
+      x := b
+    }
+  }
+  max.contents
+}
+
+let averageIntBy: (t<'a>, 'a => int) => float = (arr, projection) => {
+  let len = arr->length
+  if len == 0 {
+    raise(Invalid_argument("The input array should not be empty."))
+  }
+  let sum = ref(0)
+  for i in 0 to len - 1 {
+    sum := sum.contents + projection(arr[i])
+  }
+  Js.Int.toFloat(sum.contents) /. Js.Int.toFloat(len)
+}
+
+let averageFloatBy: (t<'a>, 'a => float) => float = (arr, projection) => {
+  let len = arr->length
+  if len == 0 {
+    raise(Invalid_argument("The input array should not be empty."))
+  }
+  let sum = ref(0.0)
+  for i in 0 to len - 1 {
+    sum := sum.contents +. projection(arr[i])
+  }
+  sum.contents /. Js.Int.toFloat(len)
+}

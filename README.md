@@ -12,9 +12,25 @@ or <br>
 `JsArray2Ex` extends `Js.Array2` module. `open JsArray2Ex` will opens `Js.Array2` module too.
 ```rescript
 open JsArray2Ex
-let nums = [1, 2, 3, 4, 5, 6, 7]
-let chunks = nums->chunkBySize(nums->length/2)
-Js.log(chunks)
+
+let fib = n => unfold(((x, (a, b))) => x < n ? Some(a + b, (x + 1, (b, a + b))) : None, (0, (0, 1)))
+
+fib(10)
+ -> scan((x,y) => x + y, 0)
+ -> windowed(4)
+ -> Js.log
+
+ // result =>
+ [
+  [ 0, 1, 3, 6 ],
+  [ 1, 3, 6, 11 ],
+  [ 3, 6, 11, 19 ],
+  [ 6, 11, 19, 32 ],
+  [ 11, 19, 32, 53 ],
+  [ 19, 32, 53, 87 ],
+  [ 32, 53, 87, 142 ],
+  [ 53, 87, 142, 231 ]
+]
 ```
 
 ## APIs
@@ -142,20 +158,29 @@ let result = [1, 2, 3, 4, 5] -> splitAt(3)
 // result => ([1, 2, 3], [4, 5])
 ```
 
+> throws `JsArray2Ex.Invalid_operation` if the source array has insufficient number of elements.
+
 #### `transpose: t<t<'a>> => t<t<'a>>`
+
 ```rescript
 let result = [[1, 2], [4, 5]] -> transpose  
 
 // result => [[1, 4], [2, 5]]                                       
 ```
+>  throws `JsArray2Ex.Invalid_argument` if the lengths of the elements of the input array is not the same.
+
 #### `windowed: (t<'a>, int) => t<t<'a>>`
+
 ```rescript
 let result = [1,2,3,4,5] -> windowed(2) 
 
 // result =>  [[1,2], [2,3], [3,4],[4,5]]
 ```
 
-#### `let except: (t<'a>, t<'a>) => t<'a>`
+> throws `JsArray2Ex.Invalid_argument` if the size argument is less than or equal to zero.
+
+#### `except: (t<'a>, t<'a>) => t<'a>`
+
 ```rescript
 let result = [1, 2, 3] -> except([1, 2])
 
@@ -169,7 +194,10 @@ let result = [1,2,3] -> head
 // result => 1
 ```
 
-#### `let tryHead: t<'a> => option<'a>`
+> throws `JsArray2Ex.Invalid_argument` if the source array is empty
+
+#### `tryHead: t<'a> => option<'a>`
+
 ```rescript
 let result = [1,2,3] -> tryHead
 
@@ -183,21 +211,164 @@ let result = [1,2,3] -> tail
 // result => [2, 3] 
 ```
 
-#### `let map2: (t<'a>, t<'b>, ('a, 'b) => 'c) => t<'c>`
+#### `map2: (t<'a>, t<'b>, ('a, 'b) => 'c) => t<'c>`
 ```rescript
 let result = map2([1, 2, 3], [4, 5, 6], (x, y) => x + y)
 
 // result => [5, 7, 9]
 ```
 
-#### `let map3: (t<'a>, t<'b>, t<'c>, ('a, 'b, 'c) => 'd) => t<'d>`
+> throws `JsArray2Ex.Invalid_argument` if the lengths of the input arrays are not the same.
+
+#### `map3: (t<'a>, t<'b>, t<'c>, ('a, 'b, 'c) => 'd) => t<'d>`
+
 ```rescript
 let result = map3([1, 2, 3], [4, 5, 6], [7,8,9], (x, y, z) => x + y + z)
 
 // result => [12, 15, 18]
 ```
 
+> throws `JsArray2Ex.Invalid_argument` if the lengths of the input arrays are not the same.
+
+#### `pairwise: t<'a> => t<('a, 'a)>`
+
+```rescript
+let result = [1, 2, 3, 4] -> pairwise
+
+// result => [(1, 2), (2, 3), (3, 4)]
+```
+
+#### `minInt: t<int> => int`
+```rescript
+let result = [1,2,3] -> minInt 
+
+// result => 1
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
+#### `maxInt: t<int> => int`
+
+```rescript
+let result = [1,2,3] -> maxInt
+
+// result => 3
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
+#### `minFloat: t<float> => float`
+
+```rescript
+let result = [1., 2., 3.] -> minFloat
+
+// result => 1.
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
+#### `maxFloat: t<float> => float`
+
+```rescript
+let result = [1., 2., 3.] -> maxFloat
+
+// result => 3.
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
+#### `sumInt: t<int> => int`
+
+```rescript
+let result = [1, 2, 3] -> sumInt
+
+// result => 6
+```
+
+#### `sumFloat: t<float> => float`
+```rescript
+let result = [1., 2., 3.] -> sumFloat
+
+// result => 6.
+```
+
+#### `averageInt: t<int> => float`
+```rescript
+let result = [1, 2, 3] -> averageInt
+
+// result => 2.
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
+#### `averageFloat: t<float> => float`
+
+```rescript
+let result = [1., 2., 3.] -> averageFloat
+
+// result => 2.
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
+#### `sumIntBy: (t<'a>, 'a => int) => int`
+
+```rescript
+let result = [1, 2, 3, 4] -> sumIntBy(x => x > 2 ? x : 0)
+
+// result => 7
+```
+
+#### `sumFloatBy: (t<'a>, 'a => float) => float`
+```rescript
+let result = [1, 2, 3, 4] -> sumFloatBy(x => x > 2 ? Js.Int.toFloat(x) : 0.)
+
+// result => 7.
+```
+
+#### `minBy: (t<'a>, 'a => 'b) => 'a`
+```rescript
+let people = [{"name": "abc", "age": 10.}, {"name": "def", "age": 20.}]
+let result =   people->minBy(x => x["age"])
+
+// result => {"name": "abc", "age": 10.}  
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
+#### `maxBy: (t<'a>, 'a => 'b) => 'a`
+
+```rescript
+let people = [{"name": "abc", "age": 10.}, {"name": "def", "age": 20.}]
+let result =   people->maxBy(x => x["age"])
+
+// result => {"name": "def", "age": 20.}  
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
+#### `averageIntBy: (t<'a>, 'a => int) => float`
+
+```rescript
+let result = [1, 2, 3, 4, 5]->averageIntBy(x => x > 2 ? x : 0)
+
+// result => 2.4
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
+#### `averageFloatBy: (t<'a>, 'a => float) => float`
+
+```rescript
+let result = [1., 2., 3., 4., 5.]->averageFloatBy(x => x > 2. ? x : 0.)
+
+// result => 2.4
+```
+
+> throws `JsArray2Ex.Invalid_argument` if the input array is empty.
+
 ### <br>Author
+
 
 Nyi Nyi Than (Jazz)
 - LinkedIn: [@nyinyithann](https://www.linkedin.com/in/nyinyithan/)

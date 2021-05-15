@@ -47,3 +47,34 @@ let tail: t<'a> => t<'a>
 let map2: (t<'a>, t<'b>, ('a, 'b) => 'c) => t<'c>
 
 let map3: (t<'a>, t<'b>, t<'c>, ('a, 'b, 'c) => 'd) => t<'d>
+
+let pairwise: t<'a> => t<('a, 'a)>
+
+let minInt: t<int> => int
+
+let maxInt: t<int> => int
+
+let minFloat: t<float> => float
+
+let maxFloat: t<float> => float
+
+let sumInt: t<int> => int
+
+let sumFloat: t<float> => float
+
+let averageInt: t<int> => float
+
+let averageFloat: t<float> => float
+
+let sumIntBy: (t<'a>, 'a => int) => int
+
+let sumFloatBy: (t<'a>, 'a => float) => float
+
+let minBy: (t<'a>, 'a => 'b) => 'a
+
+let maxBy: (t<'a>, 'a => 'b) => 'a
+
+let averageIntBy: (t<'a>, 'a => int) => float
+
+let averageFloatBy: (t<'a>, 'a => float) => float
+

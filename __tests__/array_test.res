@@ -608,11 +608,176 @@ describe("map2", () => {
 //#region map3
 describe("map3", () => {
   test("throw error if arr1, arr2 and arr3 don't have the same length", () => {
-    expect(() => map3([1, 2], [1], [1,2], (x, y, c) => x + y + c))->toThrow
+    expect(() => map3([1, 2], [1], [1, 2], (x, y, c) => x + y + c))->toThrow
   })
 
   test("should return correct result", () => {
-    expect(map3([1, 2, 3], [4, 5, 6], [7,8,9], (x, y, z) => x + y + z) == [12, 15, 18])->toBeTruthy
+    expect(
+      map3([1, 2, 3], [4, 5, 6], [7, 8, 9], (x, y, z) => x + y + z) == [12, 15, 18],
+    )->toBeTruthy
+  })
+})
+//#endregion
+
+//#region pairwise
+describe("pairwise", () => {
+  test("return empty if the length of the source arry is less than 2", () => {
+    expect([]->pairwise == [])->toBeTruthy->ignore
+    expect([1]->pairwise == [])->toBeTruthy
+  })
+
+  test("should return a correct result", () => {
+    expect([1, 2]->pairwise == [(1, 2)])->toBeTruthy->ignore
+    expect([1, 2, 3, 4]->pairwise == [(1, 2), (2, 3), (3, 4)])->toBeTruthy
+  })
+})
+//#endregion
+
+//#region minInt, minFloat, minFloat, maxFloat, sumInt, sumFloat, averageInt, averageFloat
+describe("minInt, minFloat, minFloat, maxFloat, sumInt, sumFloat, averageInt, averageFloat", () => {
+  let ints = Belt.Array.makeByU(10, (. x) => x + 1)
+  let floats = Belt.Array.makeByU(10, (. x) => Js.Int.toFloat(x) +. 1.)
+
+  test("throw error if the input array is empty", () => {
+    expect(() => []->averageInt)->toThrow
+  })
+
+  test("throw error if the input array is empty", () => {
+    expect(() => []->averageFloat)->toThrow
+  })
+
+  test("minInt", () => {
+    expect(() => []->minInt)->toThrow
+  })
+
+  test("minInt correct result", () => {
+    expect(ints->minInt == 1)->toBeTruthy
+  })
+
+  test("maxInt", () => {
+    expect(() => []->maxInt)->toThrow
+  })
+
+  test("maxInt correct result", () => {
+    expect(ints->maxInt == 10)->toBeTruthy
+  })
+
+  test("minFloat", () => {
+    expect(() => []->minFloat)->toThrow
+  })
+
+  test("minFloat correct result", () => {
+    expect(floats->minFloat == 1.)->toBeTruthy
+  })
+
+  test("maxFloat", () => {
+    expect(() => []->maxFloat)->toThrow
+  })
+
+  test("maxFloat correct result", () => {
+    expect(floats->maxFloat == 10.)->toBeTruthy
+  })
+
+  test("sumInt", () => {
+    expect(ints->sumInt == 55)->toBeTruthy
+  })
+
+  test("sumInt", () => {
+    expect([]->sumInt == 0)->toBeTruthy
+  })
+
+  test("sumFloat", () => {
+    expect([]->sumFloat == 0.)->toBeTruthy
+  })
+
+  test("sumFloat", () => {
+    expect(floats->sumFloat == 55.)->toBeTruthy
+  })
+
+  test("averageInt throws error", () => {
+    expect(() => averageInt([]))->toThrow
+  })
+
+  test("averageInt", () => {
+    expect(ints->averageInt == 55. /. 10.)->toBeTruthy
+  })
+
+  test("averageFloat throws error", () => {
+    expect(() => averageFloat([]))->toThrow
+  })
+
+  test("averageFloat", () => {
+    expect(floats->averageFloat == 55. /. 10.)->toBeTruthy
+  })
+})
+//#endregion
+
+//#region sumBy
+describe("sumIntBy, sumFloatBy", () => {
+  test("return 0 if the source arry is empty", () => {
+    expect([]->sumIntBy(x => x) == 0)->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    let people = [{"name": "abc", "age": 10}, {"name": "def", "age": 20}]
+    expect(people->sumIntBy(x => x["age"]) == 30)->toBeTruthy->ignore
+    expect([1, 2, 3, 4]->sumIntBy(x => mod(x, 2) == 0 ? x : 0) == 6)->toBeTruthy
+  })
+
+  test("return 0 if the source arry is empty", () => {
+    expect([]->sumFloatBy(x => x) == 0.)->toBeTruthy
+  })
+
+  test("should return correct result", () => {
+    let people = [{"name": "abc", "age": 10.}, {"name": "def", "age": 20.}]
+    expect(people->sumFloatBy(x => x["age"]) == 30.)->toBeTruthy->ignore
+    expect([1, 2, 3, 5]->sumFloatBy(x => x > 2 ? Js.Int.toFloat(x) : 0.) == 8.)->toBeTruthy
+  })
+})
+//#endregion
+
+//#region minBy
+describe("minBy", () => {
+  test("throw error if the source array is empty", () => {
+    expect(() => []->minBy(x => x))->toThrow
+  })
+
+  test("should return correct result", () => {
+    let people = [{"name": "abc", "age": 10.}, {"name": "def", "age": 20.}]
+    expect(people->minBy(x => x["age"]) == {"name": "abc", "age": 10.})->toBeTruthy
+  })
+})
+//#endregion
+
+//#region maxBy
+describe("maxBy", () => {
+  test("throw error if the source array is empty", () => {
+    expect(() => []->maxBy(x => x))->toThrow
+  })
+
+  test("should return correct result", () => {
+    let people = [{"name": "abc", "age": 10.}, {"name": "def", "age": 20.}]
+    expect(people->maxBy(x => x["age"]) == {"name": "def", "age": 20.})->toBeTruthy
+  })
+})
+//#endregion
+
+//#region averabeInt/FloatBy
+describe("averageIntBy/averageFloatBy", () => {
+  test("averageIntBy throws error", () => {
+    expect(() => []->averageIntBy(x => x))->toThrow
+  })
+
+  test("averageFloatBy throws error", () => {
+    expect(() => []->averageFloatBy(x => x))->toThrow
+  })
+
+  test("return correct answer", () => {
+    expect([1, 2, 3, 4, 5]->averageIntBy(x => x > 2 ? x : 0) == 2.4)->toBeTruthy
+  })
+
+  test("return correct answer", () => {
+    expect([1., 2., 3., 4., 5.]->averageFloatBy(x => x > 2. ? x : 0.) == 2.4)->toBeTruthy
   })
 })
 //#endregion
