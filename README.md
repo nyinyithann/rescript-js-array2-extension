@@ -14,23 +14,35 @@ or <br>
 open JsArray2Ex
 
 let fib = n => unfold(((x, (a, b))) => x < n ? Some(a + b, (x + 1, (b, a + b))) : None, (0, (0, 1)))
-
 fib(10)
- -> scan((x,y) => x + y, 0)
- -> windowed(4)
- -> Js.log
+->pairwise
+->windowed(4)
+->groupBy(x =>
+  x->averageIntBy(y =>
+    switch y {
+    | (f, _) => f
+    }
+  )
+)
+->forEach(x => {
+  let (f, s) = x
+  Js.log(j`Average:$f by the first value of pairs`)
+  Js.log(s)
+})
 
- // result =>
- [
-  [ 0, 1, 3, 6 ],
-  [ 1, 3, 6, 11 ],
-  [ 3, 6, 11, 19 ],
-  [ 6, 11, 19, 32 ],
-  [ 11, 19, 32, 53 ],
-  [ 19, 32, 53, 87 ],
-  [ 32, 53, 87, 142 ],
-  [ 53, 87, 142, 231 ]
-]
+// result =>
+Average:2.75 by the first value of pairs
+[ [ [ 1, 2 ], [ 2, 3 ], [ 3, 5 ], [ 5, 8 ] ] ]
+Average:4.5 by the first value of pairs
+[ [ [ 2, 3 ], [ 3, 5 ], [ 5, 8 ], [ 8, 13 ] ] ]
+Average:7.25 by the first value of pairs
+[ [ [ 3, 5 ], [ 5, 8 ], [ 8, 13 ], [ 13, 21 ] ] ]
+Average:11.75 by the first value of pairs
+[ [ [ 5, 8 ], [ 8, 13 ], [ 13, 21 ], [ 21, 34 ] ] ]
+Average:19 by the first value of pairs
+[ [ [ 8, 13 ], [ 13, 21 ], [ 21, 34 ], [ 34, 55 ] ] ]
+Average:30.75 by the first value of pairs
+[ [ [ 13, 21 ], [ 21, 34 ], [ 34, 55 ], [ 55, 89 ] ] ]
 ```
 
 ## APIs
