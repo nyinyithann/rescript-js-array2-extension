@@ -218,22 +218,21 @@ describe("distinct", () => {
   })
 
   test("test with option array", () => {
+    Js.logMany([Some(1), Some(1), None, None, Some(2)]->distinct)
     expect(
-      [Some(1), Some(1), None, None, Some(2)]->distinct == [Some(1), None, Some(2)],
+      [Some(1), Some(1), None, None, Some(2)]->distinct == [None, Some(1), Some(2)],
     )->toBeTruthy
   })
 
   test("test with poly variants array", () => {
-    expect(
-      [#RED, #GREEN, #BLUE, #RED, #GREEN, #BLUE]->distinct == [#RED, #GREEN, #BLUE],
-    )->toBeTruthy
+    expect([#RED, #GREEN, #BLUE, #RED, #GREEN, #BLUE]->distinct->length == 3)->toBeTruthy
   })
 
   test("test with record array", () => {
     expect(
       [{name: "a", age: 10.4}, {name: "a", age: 10.4}, {name: "a", age: 10.2}]->distinct == [
-          {name: "a", age: 10.4},
           {name: "a", age: 10.2},
+          {name: "a", age: 10.4},
         ],
     )->toBeTruthy
   })
@@ -244,7 +243,7 @@ describe("distinct", () => {
         {"name": "Jack", "age": 10.4},
         {"name": "Jack", "age": 10.4},
         {"name": "Bliss", "age": 10.2},
-      ]->distinct == [{"name": "Jack", "age": 10.4}, {"name": "Bliss", "age": 10.2}],
+      ]->distinct == [{"name": "Bliss", "age": 10.2}, {"name": "Jack", "age": 10.4}],
     )->toBeTruthy
   })
 
@@ -378,6 +377,22 @@ describe("groupBy", () => {
           ),
         ],
     )->toBeTruthy
+  })
+
+  test("record as key", () => {
+    let persons = [
+      {name: "Ryan", age: 5.},
+      {name: "Ryan", age: 5.},
+      {name: "ryan", age: 5.},
+      {name: "Jack", age: 10.},
+    ]
+    let result = persons->groupBy(x => x)
+    let expected = [
+      ({name: "Ryan", age: 5.}, [{name: "Ryan", age: 5.}, {name: "Ryan", age: 5.}]),
+      ({name: "ryan", age: 5.}, [{name: "ryan", age: 5.}]),
+      ({name: "Jack", age: 10.}, [{name: "Jack", age: 10.}]),
+    ]
+    expect(result == expected)->toBeTruthy
   })
 })
 //#endregion

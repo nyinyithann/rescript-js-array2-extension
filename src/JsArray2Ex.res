@@ -32,27 +32,27 @@ let chunkBySize: (t<'a>, int) => t<t<'a>> = (arr, chunkSize) => {
   }
 }
 
-let countBy: (t<'a>, 'a => 'key) => t<('key, int)> = (arr, projection) => {
+let countBy = (type k, arr: t<'a>, projection: 'a => k) => {
   let len = arr->length
   if len == 0 {
-    ([]: t<('key, int)>)
+    ([]: t<(k, int)>)
   } else {
-    let result: t<('key, int)> = []
+    module Comparable = Belt.Id.MakeComparable({
+      type t = k
+      let cmp = Pervasives.compare
+    })
+    let map = Belt.MutableMap.make(~id=module(Comparable))
     for i in 0 to len - 1 {
-      let key = projection(arr[i])
-      // to improve the line below
-      let idx = result->findIndex(x => {
-        let (k, _) = x
-        k == key
+      let item = arr[i]
+      let key = projection(item)
+      map->Belt.MutableMap.update(key, v => {
+        switch v {
+        | None => Some(1)
+        | Some(x) => Some(x + 1)
+        }
       })
-      if idx > -1 {
-        let (k, v) = result[idx]
-        result[idx] = (k, v + 1)
-      } else {
-        result->push((key, 1))->ignore
-      }
     }
-    result
+    Belt.MutableMap.toArray(map)
   }
 }
 
@@ -134,52 +134,54 @@ let mapFoldRight: (t<'a>, ('a, 'b) => ('c, 'b), 'b) => (t<'c>, 'b) = (arr, mappi
   }
 }
 
-let distinct: t<'a> => t<'a> = arr => {
+let distinct = (type a, arr: t<a>) => {
+  module Comparable = Belt.Id.MakeComparable({
+    type t = a
+    let cmp = Pervasives.compare
+  })
+  let set = Belt.MutableSet.fromArray(arr, ~id=module(Comparable))
+  Belt.MutableSet.toArray(set)
+}
+
+let distinctBy = (type k, arr: t<'a>, projection: 'a => k) => {
   let result: t<'a> = []
+  module Comparable = Belt.Id.MakeComparable({
+    type t = k
+    let cmp = Pervasives.compare
+  })
+  let set = Belt.MutableSet.make(~id=module(Comparable))
   let len = arr->length
   for i in 0 to len - 1 {
-    // to improve the line below
-    switch result->findIndex(x => x == arr[i]) {
-    | -1 => result->push(arr[i])->ignore
-    | _ => ()
+    let item = arr[i]
+    let key = projection(item)
+    if !(set->Belt.MutableSet.has(key)) {
+      result->push(item)->ignore
+      set->Belt.MutableSet.add(key)
     }
   }
   result
 }
 
-let distinctBy: (t<'a>, 'a => 'b) => t<'a> = (arr, projection) => {
-  let result: t<'a> = []
-  let keys: t<'b> = []
+let groupBy = (type k, arr: t<'a>, projection: 'a => k) => {
   let len = arr->length
+  module Comparable = Belt.Id.MakeComparable({
+    type t = k
+    let cmp = Pervasives.compare
+  })
+  let map = Belt.MutableMap.make(~id=module(Comparable))
   for i in 0 to len - 1 {
-    let key = projection(arr[i])
-    // to improve the line below
-    switch keys->findIndex(x => x == key) {
-    | -1 => {
-        result->push(arr[i])->ignore
-        keys->push(key)->ignore
+    let item = arr[i]
+    let key = projection(item)
+    map->Belt.MutableMap.update(key, v => {
+      switch v {
+      | None => Some([item])
+      | Some(x) =>
+        x->push(item)->ignore
+        Some(x)
       }
-    | _ => ()
-    }
+    })
   }
-  result
-}
-
-let groupBy: (t<'a>, 'a => 'b) => t<('b, t<'a>)> = (arr, projection) => {
-  let len = arr->length
-  let result: array<('b, t<'a>)> = []
-  for i in 0 to len - 1 {
-    let key = projection(arr[i])
-    // to improve the line below
-    switch result->findIndex(((k, _)) => k == key) {
-    | -1 => result->push((key, [arr[i]]))->ignore
-    | idx => {
-        let (_, v) = result[idx]
-        v->push(arr[i])->ignore
-      }
-    }
-  }
-  result
+  Belt.MutableMap.toArray(map)
 }
 
 let skip: (t<'a>, int) => t<'a> = (arr, count) => {

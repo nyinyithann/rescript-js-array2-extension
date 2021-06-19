@@ -2,7 +2,7 @@ include module type of Js.Array2
 
 let chunkBySize: (t<'a>, int) => t<t<'a>>
 
-let countBy: (t<'a>, 'a => 'key) => t<('key, int)>
+let countBy: (t<'a>, 'a => 'b) => t<('b, int)>
 
 let scan: (t<'a>, ('b, 'a) => 'b, 'b) => t<'b>
 
@@ -77,4 +77,3 @@ let maxBy: (t<'a>, 'a => 'b) => 'a
 let averageIntBy: (t<'a>, 'a => int) => float
 
 let averageFloatBy: (t<'a>, 'a => float) => float
-

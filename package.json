@@ -1,6 +1,6 @@
 {
   "name": "js-array2-ex",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Some extension methods to ReScript's Js.Array2 module",
   "keywords": [
     "rescript",
@@ -16,7 +16,7 @@
     "@glennsl/bs-jest": "^0.7.0",
     "jest": "^26.6.3",
     "nodemon": "^2.0.7",
-    "rescript": "^9.1.2"
+    "rescript": "^9.1.4"
   },
   "scripts": {
     "build": "rescript",
